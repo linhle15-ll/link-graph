@@ -1,0 +1,27 @@
+# Node
+node_modules
+
+# Build
+dist
+.next
+out
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+
+# IDE
+.vscode
+
+# Coverage
+coverage
+
+# pnpm
+.pnpm-store

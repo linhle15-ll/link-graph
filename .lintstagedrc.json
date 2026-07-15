@@ -1,0 +1,13 @@
+{
+  "client/**/*.{ts,tsx,js,jsx}": [
+    "pnpm --dir client lint",
+    "prettier --write"
+  ],
+  "server/**/*.{ts,js}": [
+    "pnpm --dir server lint",
+    "prettier --write"
+  ],
+  "*.{json,md,yml,yaml}": [
+    "prettier --write"
+  ]
+}
