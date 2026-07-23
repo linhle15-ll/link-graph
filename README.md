@@ -141,9 +141,10 @@ cd server
 pnpm prisma generate
 ```
 
-Apply the schema to PostgreSQL/ if schema changes: Use migration for the normal workflow
+Apply the schema to PostgreSQL/ if schema changes - Run Prisma migration commands
 
 ```bash
+pnpm prisma generate
 pnpm prisma migrate dev
 ```
 
