@@ -120,3 +120,16 @@ Or format only the client workspace:
 ```bash
 pnpm prettier --write client
 ```
+
+## Working with database
+
+The PostgreSQL database is set up on Docker volumne based on Prisma ORM for easy interacting with database using JavaScript function. This means the database lives on your local machine (SSD), which helps you testing data locally and independently.
+
+To work with database:
+
+- Make sure you have turn on the docker container by `docker compose up`.
+- Copy `.example.env` to a local `.env` and set the database URL, for example:
+
+```text
+DATABASE_URL=postgresql://postgres:postgresPassword@localhost:5432/link_graph?schema=public
+```
