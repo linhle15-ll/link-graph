@@ -107,6 +107,8 @@ Use consistent branch prefixes:
 
 ## Code quality
 
+When you commit code, this step is carried out automatically. Here are the manual steps:
+
 Before committing changes:
 
 ```bash
@@ -123,7 +125,7 @@ pnpm prettier --write client
 
 ## Working with database
 
-The PostgreSQL database is set up on Docker volumne based on Prisma ORM for easy interacting with database using JavaScript function. This means the database lives on your local machine (SSD), which helps you testing data locally and independently.
+The PostgreSQL database is set up in Docker using a named volume and Prisma ORM, which makes it easy to interact with the database from JavaScript. The database data persists locally on your machine, which is useful for testing and local development.
 
 To work with database:
 
@@ -133,3 +135,26 @@ To work with database:
 ```text
 DATABASE_URL=postgresql://postgres:postgresPassword@localhost:5432/link_graph?schema=public
 ```
+
+```bash
+cd server
+pnpm prisma generate
+```
+
+Apply the schema to PostgreSQL/ if schema changes: Use migration for the normal workflow
+
+```bash
+pnpm prisma migrate dev
+```
+
+Then start app
+
+```bash
+pnpm dev
+```
+
+**Local testing - See the full Prisma schema**
+
+Open the schema file directly: `/server/prisma/schema.prisma`
+
+See the historical SQL change in: `/server/prisma/migrations/migration.sql`
