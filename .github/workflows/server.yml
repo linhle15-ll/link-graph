@@ -1,6 +1,7 @@
 name: Server CI
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "server/**"
