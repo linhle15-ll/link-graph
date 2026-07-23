@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./server/Dockerfile
 
-    container_name: fullstack-template-server
+    container_name: link-graph-server
 
     ports:
       - "5001:5000" #HOST_PORT:CONTAINER_PORT
@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: ./client/Dockerfile
 
-    container_name: fullstack-template-client
+    container_name: link-graph-client
 
     ports:
       - "3001:3000"
@@ -43,9 +43,22 @@ services:
     depends_on:
       - server
 
+  postgres:
+    image: postgres:16
+    container_name: link-graph-postgres
+    environment:
+      POSTGRES_DB: link_graph
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgresPassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
 volumes:
   server_app:
   server_node_modules:
   client_app:
   client_node_modules:
   client_next:
+  postgres_data:

@@ -1,38 +1,9 @@
-# Fullstack Template
-
-A starter repository for a fullstack web application with separate `client/` and `server/` workspaces.
-
-## Repository structure
-
-```text
-fullstack-template/
-├── .github/
-│   └── workflows/
-│       ├── client.yml
-│       ├── server.yml
-│       └── docker.yml
-├── .husky/
-│   └── pre-commit
-├── .prettierrc
-├── .prettierignore
-├── pnpm-workspace.yaml
-├── docker-compose.yml
-├── client/
-└── server/
-```
-
 ## Overview
 
 - `client/`: Next.js frontend
 - `server/`: Express backend
 - `docker-compose.yml`: local development containers
 - `pnpm-workspace.yaml`: workspace package management
-
-## Prerequisites
-
-- Node.js 18+
-- `pnpm` installed globally
-- Docker Desktop for containerized development (optional)
 
 > Use `pnpm` for dependency management in this repository. Avoid `npm` and `yarn` unless explicitly required.
 
@@ -42,10 +13,10 @@ From the repository root:
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev # run both client and server from root
 ```
 
-If root scripts are not available, run the workspace commands separately:
+Run the workspace commands separately:
 
 ```bash
 cd client
@@ -56,81 +27,59 @@ pnpm dev
 ```bash
 cd server
 pnpm install
+
+# generate prisma client
+pnpm prisma generate
+
 pnpm dev
 ```
 
-## Frontend
-
-Open the frontend in your browser at:
-
-```text
-http://localhost:3000
-```
-
-Edit `client/app/page.tsx` to begin customizing the UI.
-
-## Backend
-
-The server runs with its own configuration and environment variables. Confirm the configured port in `server/src/server.ts` or `server/src/app.ts`.
-
-## Environment variables
+**Environment variables**
 
 Create local `.env` files for each workspace if needed:
 
 - `client/.env`
 - `server/.env`
 
-Copy values from the corresponding `example.env` file, if available.
+Copy values from the corresponding `.example.env` file.
 
-## Branch naming
+Open the application on your localhost at:
 
-Use consistent branch prefixes:
-
-- `feature/<feature-name>`
-- `bugfix/<bugfix-name>`
-- `refactor/<refactor-name>`
-
-## Code quality
-
-Before committing changes:
-
-```bash
-pnpm lint
-pnpm lint-staged
-pnpm prettier --write .
+```text
+http://localhost:3000
 ```
 
-Or format only the client workspace:
-
-```bash
-pnpm prettier --write client
-```
-
-## Server setup notes
-
-The backend includes common TypeScript and Express dependencies such as:
-
-- `express`
-- `cors`
-- `cookie-parser`
-- `dotenv`
-- `morgan`
-- `typescript`
-- `tsx`
-- `eslint`
-- `@types/node`
-- `@types/express`
-- `@types/cors`
-- `@types/morgan`
-- `@types/cookie-parser`
+- **Local dev**: http://localhost:3000
+- **Docker client**: http://localhost:3001
 
 ## Docker
 
-Run the app with Docker Compose:
+This project uses Docker named volumes for local container persistence during development.
+
+The image is built once and then reused. If you only want to start the existing containers again, run:
+
+```bash
+docker compose up
+```
+
+Use:
+
+```bash
+docker compose up --build
+```
+
+only when the image definition itself changed, such as the `Dockerfile`, base image, or dependencies that must be baked into the container image.
+
+Open the Dockerized client at:
+
+```text
+http://localhost:3001
+```
+
+- Remove the current container:
 
 ```bash
 docker compose down
-docker compose up --build
 ```
 
 Inspect status and logs:
@@ -146,3 +95,66 @@ Using http://localhost:3001/, `PORT=3001`
 In docker-compose.yml, we set PORTS in client is `3001:3000` which means `HOST_PORT:CONTAINER_PORT`, or when you visit `localhost:3001` in your browser on your port, Docker forward that traffic to port 3000 inside the container where Next.js is listening.
 
 You can only acccess http://localhost:3001/ if Docker compose is down because `localhost:3000` is now not in a separed container anymore but on your local machine.
+
+## Branch naming
+
+Use consistent branch prefixes:
+
+- `arch/<architecture-component-name>`
+- `feature/<feature-name>`
+- `bugfix/<bugfix-name>`
+- `refactor/<refactor-name>`
+
+## Code quality
+
+When you commit code, this step is carried out automatically. Here are the manual steps:
+
+Before committing changes:
+
+```bash
+pnpm lint
+pnpm lint-staged
+pnpm prettier --write .
+```
+
+Or format only the client workspace:
+
+```bash
+pnpm prettier --write client
+```
+
+## Working with database
+
+The PostgreSQL database is set up in Docker using a named volume and Prisma ORM, which makes it easy to interact with the database from JavaScript. The database data persists locally on your machine, which is useful for testing and local development.
+
+To work with database:
+
+- Make sure you have turn on the docker container by `docker compose up`.
+- Copy `.example.env` to a local `.env` and set the database URL, for example:
+
+```text
+DATABASE_URL=postgresql://postgres:postgresPassword@localhost:5432/link_graph?schema=public
+```
+
+```bash
+cd server
+pnpm prisma generate
+```
+
+Apply the schema to PostgreSQL/ if schema changes: Use migration for the normal workflow
+
+```bash
+pnpm prisma migrate dev
+```
+
+Then start app
+
+```bash
+pnpm dev
+```
+
+**Local testing - See the full Prisma schema**
+
+Open the schema file directly: `/server/prisma/schema.prisma`
+
+See the historical SQL change in: `/server/prisma/migrations/migration.sql`

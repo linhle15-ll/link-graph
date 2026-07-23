@@ -1,5 +1,5 @@
 {
-  "name": "fullstack-template",
+  "name": "link-graph",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,6 +12,14 @@
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r typecheck",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,md,json}": [
+      "prettier --write"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "keywords": [],
   "author": "",
