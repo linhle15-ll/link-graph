@@ -161,6 +161,8 @@ FOR WHEN YOU TRY TO UPDATE SCHEMA
 ```bash
 cd server
 pnpm prisma generate
+
+npx prisma db push
 ```
 
 Apply the schema to PostgreSQL/ if schema changes: Use migration for the normal workflow
