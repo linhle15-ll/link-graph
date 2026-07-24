@@ -2,8 +2,9 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import "dotenv/config";
 
-// import routes from "./routes";
+import apiRoutes from "./routes/api/index.js";
 
 const app = express();
 
@@ -13,6 +14,6 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-// app.use("/api", routes);
+app.use("/api", apiRoutes);
 
 export default app;

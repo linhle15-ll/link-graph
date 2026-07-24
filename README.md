@@ -52,6 +52,26 @@ http://localhost:3000
 - **Local dev**: http://localhost:3000
 - **Docker client**: http://localhost:3001
 
+## Project structure
+
+```
+server/src
+├── config/              # App configuration (DB, env, etc.)
+├── constants/           # Global constants
+├── controllers/         # Route controllers (request handlers), including both api and web controllers
+├── coverage/            # Test coverage output
+├── dist/                # Compiled JS (build output)
+├── middlewares/         # Express middlewares (auth, errors, etc.)
+├── public/              # Static files
+├── routes/              # Route definitions
+├── repository/          # Database interactions
+├── services/            # Business logic & helpers
+├── tests/               # Unit & integration tests
+├── types/               # TypeScript type definitions
+├── utils/               # Utility functions
+├── views/               # EJS templates (for server-side rendering)
+```
+
 ## Docker
 
 This project uses Docker named volumes for local container persistence during development.
@@ -135,6 +155,8 @@ To work with database:
 ```text
 DATABASE_URL=postgresql://postgres:postgresPassword@localhost:5432/link_graph?schema=public
 ```
+
+FOR WHEN YOU TRY TO UPDATE SCHEMA
 
 ```bash
 cd server

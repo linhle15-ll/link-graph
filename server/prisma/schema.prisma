@@ -1,12 +1,47 @@
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
+
 datasource db {
   provider = "postgresql"
 }
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-} 
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Edge {
+  id          Int      @id @default(autoincrement())
+  score       Float?
+  nodes       Node[]
+  explanation String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Node {
+  id        Int      @id @default(autoincrement())
+  title     String?
+  authors   String[]
+  source    String?
+  edges     Edge[]
+  fileId    Int
+  file      File     @relation(fields: [fileId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id          Int      @id @default(autoincrement())
+  nodes       Node[]
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
