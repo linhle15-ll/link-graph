@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { getEdge } from "../../controller/api/edgeController.js";
 import { edgeController } from "../../controller/api/index.js";
 const router = Router();
 

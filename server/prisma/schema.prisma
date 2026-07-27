@@ -17,29 +17,34 @@ model User {
 }
 
 model Edge {
-  id          Int      @id @default(autoincrement())
-  score       Float?
-  nodes       Node[]
-  explanation String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              Int           @id @default(autoincrement())
+  score           Float?
+  nodes           Node[]
+  reason          String?
+  knowledgeFileId Int
+  knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model Node {
-  id        Int      @id @default(autoincrement())
-  title     String?
-  authors   String[]
-  source    String?
-  edges     Edge[]
-  fileId    Int
-  file      File     @relation(fields: [fileId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              Int           @id @default(autoincrement())
+  title           String?
+  authors         String[]
+  source          String?
+  contentSummary  String
+  edges           Edge[]
+  knowledgeFileId Int
+  knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  link            String
 }
 
-model File {
+model KnowledgeFile {
   id          Int      @id @default(autoincrement())
   nodes       Node[]
+  edges       Edge[]
   title       String
   description String?
   createdAt   DateTime @default(now())

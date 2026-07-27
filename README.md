@@ -114,8 +114,6 @@ Using http://localhost:3001/, `PORT=3001`
 
 In docker-compose.yml, we set PORTS in client is `3001:3000` which means `HOST_PORT:CONTAINER_PORT`, or when you visit `localhost:3001` in your browser on your port, Docker forward that traffic to port 3000 inside the container where Next.js is listening.
 
-You can only acccess http://localhost:3001/ if Docker compose is down because `localhost:3000` is now not in a separed container anymore but on your local machine.
-
 ## Branch naming
 
 Use consistent branch prefixes:
@@ -165,9 +163,10 @@ pnpm prisma generate
 npx prisma db push
 ```
 
-Apply the schema to PostgreSQL/ if schema changes: Use migration for the normal workflow
+Apply the schema to PostgreSQL/ if schema changes - Run Prisma migration commands
 
 ```bash
+pnpm prisma generate
 pnpm prisma migrate dev
 ```
 
