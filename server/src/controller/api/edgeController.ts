@@ -2,7 +2,7 @@ import { asyncHandler, statuses } from "../../utils/index.js";
 import { type Request, Response, NextFunction } from "express";
 import { edgeRepository } from "../../repository/index.js";
 
-export const getEdge = asyncHandler(async (req: Request, res: Response) => {
+export const getEdgeById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const edge = await edgeRepository.getEdge(Number(id));
 
@@ -14,6 +14,9 @@ export const getEdge = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * get all edges by node Id
+ **/
 export const getAllEdges = asyncHandler(async (req: Request, res: Response) => {
   const { nodeId } = req.params;
 

@@ -8,12 +8,25 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  name           String?
+  password       String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  knowledgeFiles KnowledgeFile[]
+}
+
+model KnowledgeFile {
+  id          Int      @id @default(autoincrement())
+  nodes       Node[]  
+  edges       Edge[]
+  title       String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userID      Int
+  user        User     @relation(fields: [userID], references: [id])
 }
 
 model Edge {
@@ -29,24 +42,15 @@ model Edge {
 
 model Node {
   id              Int           @id @default(autoincrement())
-  title           String?
+  title           String
   authors         String[]
   source          String?
-  contentSummary  String
+  contentSummary  String?
+  link            String?
   edges           Edge[]
   knowledgeFileId Int
   knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  link            String
-}
 
-model KnowledgeFile {
-  id          Int      @id @default(autoincrement())
-  nodes       Node[]
-  edges       Edge[]
-  title       String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }

@@ -1,5 +1,6 @@
 import { Edge, Node } from "../generated/prisma/client.js";
-import { prisma } from "../utils/index.js";
+import { prisma, compact } from "../utils/index.js";
+import { CreateNodeInput } from "../types/index.js";
 
 export class NodeRepository {
   public async getNode(id: number): Promise<Node | null> {
@@ -10,6 +11,15 @@ export class NodeRepository {
     });
   }
 
+  public async getAllNodes(): Promise<Node[] | null> {
+    return await prisma.node.findMany();
+  }
+
+  /**
+   *
+   * @param ids of nodes you want to get
+   * @returns those nodes
+   */
   public async getNodes(ids: number[]): Promise<Node[] | null> {
     return await prisma.node.findMany({
       where: {
@@ -23,25 +33,31 @@ export class NodeRepository {
   public async getNodesByFileId(fileId: number): Promise<Node[] | null> {
     return await prisma.node.findMany({
       where: {
-        fileId: fileId,
+        knowledgeFileId: fileId,
       },
     });
   }
 
-  public async createTestNode(
-    title: string,
-    authors: string[],
-    source: string,
-    fileId: number,
-  ): Promise<number> {
-    const node = await prisma.node.create({
-      data: {
-        title: title,
-        authors: authors,
-        source: source,
-        fileId: fileId,
+  public async deleteNodeById(id: number): Promise<Node> {
+    const deletedNode = await prisma.node.delete({
+      where: {
+        id: id,
       },
     });
-    return node.id;
+    return deletedNode;
+  }
+
+  public async postNode(input: CreateNodeInput): Promise<Node> {
+    const node = await prisma.node.create({
+      data: compact({
+        title: input.title,
+        authors: input.authors,
+        source: input.source,
+        contentSummary: input.contentSummary,
+        link: input.link,
+        knowledgeFileId: input.knowledgeFileId,
+      }),
+    });
+    return node;
   }
 }

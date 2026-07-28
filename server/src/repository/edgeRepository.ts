@@ -22,27 +22,27 @@ export class EdgeRepository {
     });
   }
 
-  public async createTestEdge(
-    score: number,
-    explanation: string,
-    node1: number,
-    node2: number,
-  ): Promise<void> {
-    await prisma.edge.create({
-      data: {
-        score: score,
-        explanation: explanation,
-        nodes: {
-          connect: [
-            {
-              id: node1,
-            },
-            {
-              id: node2,
-            },
-          ],
-        },
-      },
-    });
-  }
+  // public async createTestEdge(
+  //   score: number,
+  //   explanation: string,
+  //   node1: number,
+  //   node2: number,
+  // ): Promise<void> {
+  //   await prisma.edge.create({
+  //     data: {
+  //       score: score,
+  //       reason: explanation,
+  //       nodes: {
+  //         connect: [
+  //           {
+  //             id: node1,
+  //           },
+  //           {
+  //             id: node2,
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   });
+  // }
 }

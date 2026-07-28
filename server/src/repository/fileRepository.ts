@@ -1,11 +1,12 @@
-import { File } from "../generated/prisma/client.js";
+import { KnowledgeFile } from "../generated/prisma/client.js";
 import { prisma } from "../utils/index.js";
 
 export class FileRepository {
-  public async creatFile(title: string): Promise<number> {
-    const file = await prisma.file.create({
+  public async creatFile(title: string, userId: number): Promise<number> {
+    const file = await prisma.knowledgeFile.create({
       data: {
         title: title,
+        userID: userId,
       },
     });
     return file.id;

@@ -1,31 +1,43 @@
 import {
   fileRepository,
-  edgeRepository,
+  userRepository,
   nodeRepository,
 } from "../repository/index.js";
-
+import { CreateNodeInput } from "../types/index.js";
 async function main() {
-  const fileId = await fileRepository.creatFile("Causal Inference");
-  const nodeId1 = await nodeRepository.createTestNode(
-    "Causal inference in statistics: An overview",
-    ["Judea Pearl"],
-    "10.1214/09-SS057",
-    fileId,
+  const userId = await userRepository.createUser(
+    "user1",
+    "user1@gmail.com",
+    "rawPassword",
   );
+  const fileId = await fileRepository.creatFile("Causal Inference", userId);
 
-  const nodeId2 = await nodeRepository.createTestNode(
-    "A review of instrumental variable estimators for Mendelian randomization",
-    ["Stephen Burgess", "Dylan S Small", "Simon G Thompson"],
-    "10.1177/0962280215597579",
-    fileId,
-  );
+  const nodeInput1: CreateNodeInput = {
+    title: "Causal inference in statistics: An overview",
+    authors: ["Judea Pearl"],
+    source: "10.1214/09-SS057",
+    knowledgeFileId: fileId,
+    link: "https://projecteuclid.org/journals/statistics-surveys/volume-3/issue-none/Causal-inference-in-statistics-An-overview/10.1214/09-SS057.full",
+  };
 
-  await edgeRepository.createTestEdge(
-    89,
-    "Instrumental variable is one of the principle methods of establishing causal inference",
-    nodeId1,
-    nodeId2,
-  );
+  const nodeId1 = await nodeRepository.postNode(nodeInput1);
+
+  const nodeId2 = await nodeRepository.postNode({
+    title:
+      "A review of instrumental variable estimators for Mendelian randomization",
+
+    authors: ["Stephen Burgess", "Dylan S Small", "Simon G Thompson"],
+    source: "10.1177/0962280215597579",
+    knowledgeFileId: fileId,
+    link: "https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://pubmed.ncbi.nlm.nih.gov/26282889/&ved=2ahUKEwjzudnm9_WVAxWZtlYBHbuNHIEQFnoECCIQAQ&usg=AOvVaw3dhfmNzX7-bCSdk6IaazDt",
+  });
+
+  // await edgeRepository.createTestEdge(
+  //   89,
+  //   "Instrumental variable is one of the principle methods of establishing causal inference",
+  //   nodeId1,
+  //   nodeId2,
+  // );
 }
 
 main()

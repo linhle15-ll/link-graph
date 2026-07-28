@@ -16,13 +16,14 @@ export class UserRepository {
     name: string,
     email: string,
     password: string,
-  ): Promise<void> {
-    await prisma.user.create({
+  ): Promise<number> {
+    const user = await prisma.user.create({
       data: {
         email: email,
         name: name,
         password: password,
       },
     });
+    return user.id;
   }
 }

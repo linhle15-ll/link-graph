@@ -5,6 +5,6 @@ const router = Router();
 // validate request (query deconstruction)
 router.route("/").get(edgeController.getAllEdges);
 
-router.route("/:id").get(edgeController.getEdge);
+router.route("/:id").get(edgeController.getEdgeById);
 
 export default router;
