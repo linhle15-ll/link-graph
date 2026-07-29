@@ -1,5 +1,4 @@
-import { Edge } from "../generated/prisma/client.js";
-import { prisma } from "../utils/index.js";
+import { prisma, Edge } from "../utils/index.js";
 
 export class EdgeRepository {
   public async getEdge(id: number): Promise<Edge | null> {
@@ -21,28 +20,4 @@ export class EdgeRepository {
       },
     });
   }
-
-  // public async createTestEdge(
-  //   score: number,
-  //   explanation: string,
-  //   node1: number,
-  //   node2: number,
-  // ): Promise<void> {
-  //   await prisma.edge.create({
-  //     data: {
-  //       score: score,
-  //       reason: explanation,
-  //       nodes: {
-  //         connect: [
-  //           {
-  //             id: node1,
-  //           },
-  //           {
-  //             id: node2,
-  //           },
-  //         ],
-  //       },
-  //     },
-  //   });
-  // }
 }

@@ -1,5 +1,4 @@
-import { Edge, Node } from "../generated/prisma/client.js";
-import { prisma, compact } from "../utils/index.js";
+import { prisma, compact, Edge, Node } from "../utils/index.js";
 import { CreateNodeInput } from "../types/index.js";
 
 export class NodeRepository {

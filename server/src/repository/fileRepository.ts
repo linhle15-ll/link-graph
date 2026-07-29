@@ -1,5 +1,4 @@
-import { KnowledgeFile } from "../generated/prisma/client.js";
-import { prisma } from "../utils/index.js";
+import { prisma, KnowledgeFile } from "../utils/index.js";
 
 export class FileRepository {
   public async creatFile(title: string, userId: number): Promise<number> {

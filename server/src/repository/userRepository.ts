@@ -1,6 +1,4 @@
-import { User } from "../generated/prisma/client.js";
-import { prisma } from "../utils/index.js";
-// import { Prisma } from "@prisma/client/extension"
+import { prisma, User } from "../utils/index.js";
 
 export class UserRepository {
   public async getUser(email: string, password: string): Promise<User | null> {

@@ -1,4 +1,4 @@
-import { Node } from "../generated/prisma/client.js";
+import { Node } from "../utils/index.js";
 import { nodeRepository } from "../repository/index.js";
 import { CreateNodeInput } from "../types/index.js";
 

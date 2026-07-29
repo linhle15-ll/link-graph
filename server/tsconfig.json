@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "ES2022",
     // File Layout
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
 
     // Environment Settings
@@ -37,6 +37,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"],
+  "include": ["src", "prisma/prisma", "prisma/generated"],
   "exclude": ["node_modules", "dist"]
 }
