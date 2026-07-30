@@ -1,76 +1,51 @@
-/**
- * Shared frontend types.
- * These mirror server/prisma/schema.prisma — keep them in sync.
- */
+/** UI-level data shapes. A real data layer can implement these later. */
 
-export interface KnowledgeFile {
-  id: number;
-  title: string;
-  description: string | null;
-  createdAt: string;
-}
-
-/** A research source ingested from a link (via the Chrome extension or manual add). */
-export interface GraphNode {
-  id: number;
-  title: string;
-  link: string;
-  contentSummary: string;
-  text: string | null;
-  tags: string[];
-  author: string;
-  site: string;
-  createdAt: string;
-  knowledgeFileId: number;
-}
-
-/**
- * A relationship detected by the edge-detection (NLP) service.
- * In the database an Edge connects Nodes through the NodeEdge join table,
- * so the API returns the connected node ids as `nodeIds` (always 2 for now).
- */
-export interface GraphEdge {
-  id: number;
-  score: number; // NLP confidence, 0–1
-  reason: string; // why the services linked these nodes
-  tags: string[];
-  createdAt: string;
-  knowledgeFileId: number;
-  nodeIds: number[];
-}
-
-/** Response shape of GET /api/graph */
-export interface GraphResponse {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
-}
-
-/** Response shape of POST /api/links */
-export interface AddLinkResponse {
-  node: GraphNode;
-}
-
-/** Mirrors the User model (never includes password on the client). */
-export interface User {
+export type Folder = {
   id: number;
   name: string;
-  email: string;
-  createdAt: string;
-}
-
-/** Response shape of POST /api/auth/login and /api/auth/signup */
-export interface AuthResponse {
-  user: User;
-}
-
-/**
- * A knowledge session: a workspace grouping sources into one graph.
- * (Backed by the KnowledgeFile model once its relations are 1-to-many.)
- */
-export interface Session {
-  id: number;
-  title: string;
   description: string | null;
-  createdAt: string;
-  nodeCount: number;
-}
+  color: string | null;
+};
+
+export type FolderSummary = Folder & {
+  linkCount: number;
+  edgeCount: number;
+};
+
+export type LinkNode = {
+  id: number;
+  folderId: number;
+  title: string;
+  url: string;
+  description: string | null;
+  posX: number;
+  posY: number;
+};
+
+/** A supporting quote or excerpt that justifies an edge. */
+export type EdgeEvidence = {
+  id: number;
+  quote: string;
+  /** Where the quote came from, e.g. "Section 3.2" or a source title. */
+  source: string | null;
+};
+
+export type GraphEdge = {
+  id: number;
+  folderId: number;
+  sourceId: number;
+  targetId: number;
+  /** Short relationship label rendered on the edge, e.g. "builds on". */
+  label: string | null;
+  /** Long-form explanation of why the two sources are connected. */
+  reasoning: string | null;
+  /** 1 = loosely related, 2 = related, 3 = strongly related. */
+  strength: number;
+  evidence: EdgeEvidence[];
+};
+
+export const EDGE_STRENGTHS = [
+  { value: "1", label: "Loosely related" },
+  { value: "2", label: "Related" },
+  { value: "3", label: "Strongly related" },
+] as const;
