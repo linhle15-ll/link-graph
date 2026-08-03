@@ -31,6 +31,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm --filter database generate
+
       - run: pnpm lint
 
       - run: pnpm typecheck
