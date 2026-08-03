@@ -1,10 +1,5 @@
 import { type Request, Response, NextFunction } from "express";
-
-type AsyncHandlerFn = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => Promise<void>;
+import { AsyncHandlerFn } from "../types/index.js";
 
 const asyncHandler =
   (fn: AsyncHandlerFn) => (req: Request, res: Response, next: NextFunction) => {

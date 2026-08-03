@@ -1,9 +1,4 @@
-import { UserRepository } from "./userRepository.js";
-import { NodeRepository } from "./nodeRepository.js";
-import { EdgeRepository } from "./edgeRepository.js";
-import { FileRepository } from "./fileRepository.js";
-
-export const fileRepository = new FileRepository();
-export const userRepository = new UserRepository();
-export const nodeRepository = new NodeRepository();
-export const edgeRepository = new EdgeRepository();
+export * as userRepository from "./userRepository.js";
+export * as nodeRepository from "./nodeRepository.js";
+export * as edgeRepository from "./edgeRepository.js";
+export * as knowledgeFileRepository from "./knowledgeFileRepository.js";

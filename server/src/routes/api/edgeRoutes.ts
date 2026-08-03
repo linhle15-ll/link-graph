@@ -1,10 +1,17 @@
 import { Router } from "express";
 import { edgeController } from "../../controller/api/index.js";
+import { authenticate } from "../../middleware/index.js";
 const router = Router();
 
-// validate request (query deconstruction)
-router.route("/").get(edgeController.getAllEdges);
+router
+  .route("/")
+  .get(authenticate, edgeController.getEdges)
+  .delete(authenticate, edgeController.deleteEdgesByKnowledgeFileId)
+  .post(authenticate, edgeController.postEdge);
 
-router.route("/:id").get(edgeController.getEdgeById);
+router
+  .route("/:id")
+  .get(authenticate, edgeController.getEdgeById)
+  .delete(authenticate, edgeController.deleteEdgeById);
 
 export default router;

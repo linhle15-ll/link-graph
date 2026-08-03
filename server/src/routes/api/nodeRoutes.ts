@@ -1,13 +1,17 @@
 import { Router } from "express";
 import { nodeController } from "../../controller/api/index.js";
+import { authenticate } from "../../middleware/auth.js";
 const router = Router();
 
-router.route("/").get(nodeController.getAllNodes).post(nodeController.postNode);
+router
+  .route("/")
+  .get(nodeController.getNodesByFileId)
+  .post(authenticate, nodeController.postNode)
+  .delete(nodeController.deleteNodesByFileId);
 
 router
   .route("/:id")
-  .get(nodeController.getNodeById)
-  .delete(nodeController.deleteNodeById);
+  .get(authenticate, nodeController.getNodeById)
+  .delete(authenticate, nodeController.deleteNodeById);
 
-router.route("/bulk").delete(nodeController.deleteAllNodes);
 export default router;

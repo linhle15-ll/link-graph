@@ -34,6 +34,16 @@ pnpm prisma generate
 pnpm dev
 ```
 
+working with database
+
+```bash
+cd database
+pnpm install
+
+# generate prisma client
+pnpm prisma generate
+```
+
 **Environment variables**
 
 Create local `.env` files for each workspace if needed:
@@ -52,15 +62,14 @@ http://localhost:3000
 - **Local dev**: http://localhost:3000
 - **Docker client**: http://localhost:3001
 
-## Project structure
+## Server structure
 
 ```
 server/src
-├── config/              # App configuration (DB, env, etc.)
+├── config/              # App configuration (instants etc.)
 ├── constants/           # Global constants
 ├── controllers/         # Route controllers (request handlers), including both api and web controllers
 ├── coverage/            # Test coverage output
-├── dist/                # Compiled JS (build output)
 ├── middlewares/         # Express middlewares (auth, errors, etc.)
 ├── public/              # Static files
 ├── routes/              # Route definitions
@@ -148,7 +157,7 @@ The PostgreSQL database is set up in Docker using a named volume and Prisma ORM,
 To work with database:
 
 - Make sure you have turn on the docker container by `docker compose up`.
-- Copy `.example.env` to a local `.env` and set the database URL, for example:
+- Copy `.example.env` to a local `.env` in server workspace and set the database URL, for example:
 
 ```text
 DATABASE_URL=postgresql://postgres:postgresPassword@localhost:5432/link_graph?schema=public
@@ -157,7 +166,7 @@ DATABASE_URL=postgresql://postgres:postgresPassword@localhost:5432/link_graph?sc
 FOR WHEN YOU TRY TO UPDATE SCHEMA
 
 ```bash
-cd server
+cd database
 pnpm prisma generate
 
 npx prisma db push
@@ -178,6 +187,6 @@ pnpm dev
 
 **Local testing - See the full Prisma schema**
 
-Open the schema file directly: `/server/prisma/schema.prisma`
+Open the schema file directly: `/database/prisma/schema.prisma`
 
-See the historical SQL change in: `/server/prisma/migrations/migration.sql`
+See the historical SQL change in: `/database/prisma/migrations/migration.sql`

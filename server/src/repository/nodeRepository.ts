@@ -1,62 +1,67 @@
-import { prisma, compact, Edge, Node } from "../utils/index.js";
+import { prisma, Node } from "database";
 import { CreateNodeInput } from "../types/index.js";
 
-export class NodeRepository {
-  public async getNode(id: number): Promise<Node | null> {
-    return await prisma.node.findUnique({
-      where: {
-        id: id,
+export const getNode = async (id: number): Promise<Node | null> => {
+  return await prisma.node.findUnique({
+    where: {
+      id: id,
+    },
+  });
+};
+
+export const getAllNodes = async (): Promise<Node[] | null> => {
+  return await prisma.node.findMany();
+};
+
+/**
+ *
+ * @param ids of nodes you want to get
+ * @returns those nodes
+ */
+export const getNodes = async (ids: number[]): Promise<Node[] | null> => {
+  return await prisma.node.findMany({
+    where: {
+      id: {
+        in: ids,
       },
-    });
-  }
+    },
+  });
+};
 
-  public async getAllNodes(): Promise<Node[] | null> {
-    return await prisma.node.findMany();
-  }
+export const getNodesByFileId = async (
+  fileId: number,
+): Promise<Node[] | null> => {
+  return await prisma.node.findMany({
+    where: {
+      knowledgeFileId: fileId,
+    },
+  });
+};
 
-  /**
-   *
-   * @param ids of nodes you want to get
-   * @returns those nodes
-   */
-  public async getNodes(ids: number[]): Promise<Node[] | null> {
-    return await prisma.node.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
-  }
+export const deleteNodeById = async (id: number): Promise<Node | null> => {
+  const deletedNode = await prisma.node.delete({
+    where: {
+      id: id,
+    },
+  });
+  return deletedNode;
+};
 
-  public async getNodesByFileId(fileId: number): Promise<Node[] | null> {
-    return await prisma.node.findMany({
-      where: {
-        knowledgeFileId: fileId,
-      },
-    });
-  }
+export const deleteNodesByFileId = async (
+  fileId: number,
+): Promise<number | null> => {
+  const deletedNodes = await prisma.node.deleteMany({
+    where: {
+      knowledgeFileId: fileId,
+    },
+  });
 
-  public async deleteNodeById(id: number): Promise<Node> {
-    const deletedNode = await prisma.node.delete({
-      where: {
-        id: id,
-      },
-    });
-    return deletedNode;
-  }
+  return deletedNodes.count > 0 ? deletedNodes.count : null;
+};
 
-  public async postNode(input: CreateNodeInput): Promise<Node> {
-    const node = await prisma.node.create({
-      data: compact({
-        title: input.title,
-        authors: input.authors,
-        source: input.source,
-        contentSummary: input.contentSummary,
-        link: input.link,
-        knowledgeFileId: input.knowledgeFileId,
-      }),
-    });
-    return node;
-  }
-}
+export const postNode = async (input: CreateNodeInput): Promise<Node> => {
+  const node = await prisma.node.create({
+    data: input,
+  });
+  return node;
+};

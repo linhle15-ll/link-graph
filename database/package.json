@@ -1,0 +1,31 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch index.ts",
+    "build": "tsc --watch",
+    "start": "node dist/index.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "@prisma/adapter-pg": "^7.9.0",
+    "@prisma/client": "^7.8.0",
+    "@prisma/config": "^7.9.1",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.8.0",
+    "pg": "^8.22.0",
+    "tsx": "^4.23.1",
+    "type": "^2.7.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.65.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "globals": "^17.7.0"
+  }
+}

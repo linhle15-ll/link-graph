@@ -17,11 +17,12 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@prisma/adapter-pg": "^7.9.0",
-    "@prisma/client": "^7.8.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "database": "workspace:*",
     "dotenv": "^17.4.2",
+    "errorhandler": "^1.5.2",
+    "errorizer": "^1.0.0",
     "express": "^5.2.1",
     "morgan": "^1.11.0"
   },
@@ -34,7 +35,6 @@
     "@types/node": "^20.19.43",
     "eslint": "^9.39.5",
     "globals": "^17.7.0",
-    "prisma": "^7.8.0",
     "tsx": "^4.23.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.63.0"

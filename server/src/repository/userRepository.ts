@@ -1,4 +1,4 @@
-import { prisma, User } from "../utils/index.js";
+import { prisma, User } from "database";
 
 export class UserRepository {
   public async getUser(email: string, password: string): Promise<User | null> {

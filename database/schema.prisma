@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "./generated/prisma"
 }
 
 datasource db {
@@ -25,8 +25,8 @@ model KnowledgeFile {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  userID      Int
-  user        User     @relation(fields: [userID], references: [id])
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Edge {
@@ -52,5 +52,4 @@ model Node {
   knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-
 }
