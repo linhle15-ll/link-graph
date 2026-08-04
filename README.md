@@ -2,6 +2,7 @@
 
 - `client/`: Next.js frontend
 - `server/`: Express backend
+- `database/`: PostgreSQL database
 - `docker-compose.yml`: local development containers
 - `pnpm-workspace.yaml`: workspace package management
 
