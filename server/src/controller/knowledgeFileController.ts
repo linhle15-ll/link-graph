@@ -1,8 +1,8 @@
-import { asyncHandler, statuses } from "../../utils/index.js";
+import { asyncHandler, statuses } from "../utils/index.js";
 import { type Request, Response, NextFunction } from "express";
-import { knowledgeFileService } from "../../services/index.js";
-import { CustomRequest } from "../../types/index.js";
-import { AppError } from "../../middleware/errorHandler.js";
+import { knowledgeFileService } from "../services/index.js";
+import { CustomRequest } from "../types/index.js";
+import { AppError } from "../middleware/errorHandler.js";
 
 export const getAllKnowledgeFiles = asyncHandler(
   async (req: Request, res: Response) => {

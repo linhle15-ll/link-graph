@@ -2,10 +2,10 @@ import {
   asyncHandler,
   getQueryParamAsNumber,
   statuses,
-} from "../../utils/index.js";
+} from "../utils/index.js";
 import { type Request, Response, NextFunction } from "express";
-import { nodeService } from "../../services/index.js";
-import { AppError } from "../../middleware/errorHandler.js";
+import { nodeService } from "../services/index.js";
+import { AppError } from "../middleware/errorHandler.js";
 
 export const getNodeById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

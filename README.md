@@ -1,6 +1,7 @@
 ## Overview
 
 - `client/`: Next.js frontend
+- `database/`: PostgreSQL database
 - `server/`: Express backend
 - `docker-compose.yml`: local development containers
 - `pnpm-workspace.yaml`: workspace package management
@@ -28,9 +29,7 @@ pnpm dev
 cd server
 pnpm install
 
-# generate prisma client
-pnpm prisma generate
-
+# finish db steps before this
 pnpm dev
 ```
 

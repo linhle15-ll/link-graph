@@ -21,8 +21,6 @@
     "cors": "^2.8.6",
     "database": "workspace:*",
     "dotenv": "^17.4.2",
-    "errorhandler": "^1.5.2",
-    "errorizer": "^1.0.0",
     "express": "^5.2.1",
     "morgan": "^1.11.0"
   },

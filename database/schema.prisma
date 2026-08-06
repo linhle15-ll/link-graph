@@ -12,28 +12,28 @@ model User {
   email          String          @unique
   name           String?
   password       String
+  knowledgeFiles KnowledgeFile[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  knowledgeFiles KnowledgeFile[]
 }
 
 model KnowledgeFile {
-  id          Int      @id @default(autoincrement())
-  nodes       Node[]  
-  edges       Edge[]
+  id Int @id @default(autoincrement())
   title       String   @unique
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  nodes       Node[]
+  edges       Edge[]
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Edge {
   id              Int           @id @default(autoincrement())
   score           Float?
-  nodes           Node[]
   reason          String?
+  nodes           Node[]
   knowledgeFileId Int
   knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
   createdAt       DateTime      @default(now())
