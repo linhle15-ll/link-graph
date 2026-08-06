@@ -1,7 +1,7 @@
 import { type Request, Response, NextFunction } from "express";
 import { CustomRequest } from "../types/index.js";
 
-// stub - token validation not implemented yet
+// TODO: bearer token validation
 export const authenticate = (
   req: Request,
   res: Response,
