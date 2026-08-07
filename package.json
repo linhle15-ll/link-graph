@@ -24,7 +24,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@11.13.0",
+  "packageManager": "pnpm@11.20.0",
   "type": "module",
   "devDependencies": {
     "husky": "^9.1.7",
