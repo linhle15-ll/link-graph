@@ -1,6 +1,7 @@
 ## Overview
 
 - `client/`: Next.js frontend
+- `database/`: PostgreSQL database
 - `server/`: Express backend
 - `database/`: PostgreSQL database
 - `docker-compose.yml`: local development containers
@@ -29,10 +30,18 @@ pnpm dev
 cd server
 pnpm install
 
+# finish db steps before this
+pnpm dev
+```
+
+working with database
+
+```bash
+cd database
+pnpm install
+
 # generate prisma client
 pnpm prisma generate
-
-pnpm dev
 ```
 
 **Environment variables**
@@ -52,6 +61,25 @@ http://localhost:3000
 
 - **Local dev**: http://localhost:3000
 - **Docker client**: http://localhost:3001
+
+## Server structure
+
+```
+server/src
+├── config/              # App configuration (instants etc.)
+├── constants/           # Global constants
+├── controllers/         # Route controllers (request handlers), including both api and web controllers
+├── coverage/            # Test coverage output
+├── middlewares/         # Express middlewares (auth, errors, etc.)
+├── public/              # Static files
+├── routes/              # Route definitions
+├── repository/          # Database interactions
+├── services/            # Business logic & helpers
+├── tests/               # Unit & integration tests
+├── types/               # TypeScript type definitions
+├── utils/               # Utility functions
+├── views/               # EJS templates (for server-side rendering)
+```
 
 ## Docker
 
@@ -129,15 +157,19 @@ The PostgreSQL database is set up in Docker using a named volume and Prisma ORM,
 To work with database:
 
 - Make sure you have turn on the docker container by `docker compose up`.
-- Copy `.example.env` to a local `.env` and set the database URL, for example:
+- Copy `.example.env` to a local `.env` in server workspace and set the database URL, for example:
 
 ```text
 DATABASE_URL=postgresql://postgres:postgresPassword@localhost:5432/link_graph?schema=public
 ```
 
+FOR WHEN YOU TRY TO UPDATE SCHEMA
+
 ```bash
-cd server
+cd database
 pnpm prisma generate
+
+npx prisma db push
 ```
 
 Apply the schema to PostgreSQL/ if schema changes - Run Prisma migration commands
@@ -155,6 +187,6 @@ pnpm dev
 
 **Local testing - See the full Prisma schema**
 
-Open the schema file directly: `/server/prisma/schema.prisma`
+Open the schema file directly: `/database/prisma/schema.prisma`
 
-See the historical SQL change in: `/server/prisma/migrations/migration.sql`
+See the historical SQL change in: `/database/prisma/migrations/migration.sql`

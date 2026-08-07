@@ -1,6 +1,7 @@
 packages:
   - client
   - server
+  - database
 allowBuilds:
   "@prisma/engines": false
   esbuild: false

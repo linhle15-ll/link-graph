@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  name           String?
+  password       String
+  knowledgeFiles KnowledgeFile[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model KnowledgeFile {
+  id Int @id @default(autoincrement())
+  title       String   @unique
+  description String?
+  nodes       Node[]
+  edges       Edge[]
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Edge {
+  id              Int           @id @default(autoincrement())
+  score           Float?
+  reason          String?
+  nodes           Node[]
+  knowledgeFileId Int
+  knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Node {
+  id              Int           @id @default(autoincrement())
+  title           String
+  authors         String[]
+  source          String?
+  contentSummary  String?
+  link            String?
+  edges           Edge[]
+  knowledgeFileId Int
+  knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}

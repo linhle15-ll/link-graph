@@ -1,8 +1,28 @@
 import { Router } from "express";
-import healthRouter from "./health.js";
+import edgeRouter from "./edgeRoutes.js";
+import nodeRouter from "./nodeRoutes.js";
+import knowledgeFileRouter from "./knowledgeFileRoutes.js";
+import { Route } from "../types/index.js";
 
 const router = Router();
 
-router.use("/health", healthRouter);
+const allRoutes: Route[] = [
+  {
+    path: "/edges",
+    route: edgeRouter,
+  },
+  {
+    path: "/nodes",
+    route: nodeRouter,
+  },
+  {
+    path: "/knowledgeFiles",
+    route: knowledgeFileRouter,
+  },
+];
+
+allRoutes.forEach((route) => {
+  router.use(route.path, route.route);
+});
 
 export default router;
