@@ -1,5 +1,5 @@
 import {
-  knowledgeFileRepository,
+  knowledgeFolderRepository,
   userRepository,
   nodeRepository,
   edgeRepository,
@@ -14,7 +14,7 @@ async function main() {
     "user1@gmail.com",
     "rawPassword",
   );
-  const fileId = await knowledgeFileRepository.creatFile(
+  const folderId = await knowledgeFolderRepository.createFolder(
     "Causal Inference",
     userId,
   );
@@ -23,7 +23,7 @@ async function main() {
     title: "Causal inference in statistics: An overview",
     authors: ["Judea Pearl"],
     source: "10.1214/09-SS057",
-    knowledgeFileId: fileId,
+    knowledgeFolderId: folderId,
     link: "https://projecteuclid.org/journals/statistics-surveys/volume-3/issue-none/Causal-inference-in-statistics-An-overview/10.1214/09-SS057.full",
   };
 
@@ -35,15 +35,16 @@ async function main() {
 
     authors: ["Stephen Burgess", "Dylan S Small", "Simon G Thompson"],
     source: "10.1177/0962280215597579",
-    knowledgeFileId: fileId,
+    knowledgeFolderId: folderId,
     link: "https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://pubmed.ncbi.nlm.nih.gov/26282889/&ved=2ahUKEwjzudnm9_WVAxWZtlYBHbuNHIEQFnoECCIQAQ&usg=AOvVaw3dhfmNzX7-bCSdk6IaazDt",
   });
 
   const edgeInput: CreateEdgeInput = {
-    knowledgeFileId: fileId,
-    nodeIds: [node1.id, node2.id],
+    knowledgeFolderId: folderId,
+    firstNodeId: node1.id,
+    secondNodeId: node2.id,
     score: 89,
-    reason:
+    reasoning:
       "Instrumental variable is one of the principle methods of establishing causal inference",
   };
 
