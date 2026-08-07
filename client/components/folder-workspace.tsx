@@ -406,25 +406,8 @@ export function FolderWorkspace({ folderId }: { folderId: number }) {
         {/* Canvas */}
         <div className={graph.canvas}>
           <KnowledgeGraph
-            links={nodesOnGraph.map((n) => ({
-              id: n.id,
-              folderId: n.knowledgeFolderId,
-              title: n.title,
-              url: n.link,
-              description: n.contentSummary,
-              posX: n.posX ?? 0,
-              posY: n.posY ?? 0,
-            }))}
-            edges={edges.map((e) => ({
-              id: e.id,
-              folderId: e.knowledgeFolderId,
-              sourceId: e.firstNodeId,
-              targetId: e.secondNodeId,
-              label: e.label,
-              reasoning: e.reasoning,
-              strength: e.score ?? 50,
-              evidence: [],
-            }))}
+            links={nodesOnGraph}
+            edges={edges}
             folderColor={folder.color}
             selectedLinkId={selectedLink?.id ?? null}
             selectedEdgeId={selectedEdge?.id ?? null}
@@ -441,15 +424,7 @@ export function FolderWorkspace({ folderId }: { folderId: number }) {
         {selectedLink ? (
           <LinkInspector
             key={`link-${selectedLink.id}`}
-            link={{
-              id: selectedLink.id,
-              folderId: selectedLink.knowledgeFolderId,
-              title: selectedLink.title,
-              url: selectedLink.link,
-              description: selectedLink.contentSummary,
-              posX: selectedLink.posX ?? 0,
-              posY: selectedLink.posY ?? 0,
-            }}
+            link={selectedLink}
             connectionCount={
               edges.filter(
                 (e) =>
@@ -476,16 +451,7 @@ export function FolderWorkspace({ folderId }: { folderId: number }) {
         {selectedEdge ? (
           <EdgeInspector
             key={`edge-${selectedEdge.id}`}
-            edge={{
-              id: selectedEdge.id,
-              folderId: selectedEdge.knowledgeFolderId,
-              sourceId: selectedEdge.firstNodeId,
-              targetId: selectedEdge.secondNodeId,
-              label: selectedEdge.label,
-              reasoning: selectedEdge.reasoning,
-              strength: selectedEdge.score ?? 50,
-              evidence: [],
-            }}
+            edge={selectedEdge}
             sourceTitle={titleById.get(selectedEdge.firstNodeId) ?? "Unknown"}
             targetTitle={titleById.get(selectedEdge.secondNodeId) ?? "Unknown"}
             onClose={() => setSelection(null)}

@@ -15,15 +15,15 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
-import type { GraphEdge, LinkNode } from "@/lib/types";
+import type { Node, Edge } from "@/lib/types";
 import { colorVar, graph } from "@/lib/theme";
 import { LinkGraphNode, type LinkNodeData } from "@/components/link-graph-node";
 
 const nodeTypes: NodeTypes = { link: LinkGraphNode };
 
 type Props = {
-  links: LinkNode[];
-  edges: GraphEdge[];
+  links: Node[];
+  edges: Edge[];
   folderColor: string | null;
   selectedLinkId: number | null;
   selectedEdgeId: number | null;
@@ -52,10 +52,10 @@ export function KnowledgeGraph({
       links.map((l) => ({
         id: String(l.id),
         type: "link",
-        position: { x: l.posX, y: l.posY },
+        position: { x: l.posX ?? 0, y: l.posY ?? 0 },
         data: {
           title: l.title,
-          url: l.url,
+          url: l.link,
           color: folderColor ?? "chart-1",
         },
         selected: selectedLinkId === l.id,
@@ -67,23 +67,21 @@ export function KnowledgeGraph({
     () =>
       edges.map((e) => {
         const active = selectedEdgeId === e.id;
+        const strength = e.score ?? 50;
         // Normalize strength from 0-100 to 1-4 for visual weight
-        const normalizedStrength = Math.max(
-          1,
-          Math.min(4, e.strength / 25 + 1),
-        );
-        const isStrong = e.strength >= 75;
+        const normalizedStrength = Math.max(1, Math.min(4, strength / 25 + 1));
+        const isStrong = strength >= 75;
 
         return {
           id: String(e.id),
-          source: String(e.sourceId),
-          target: String(e.targetId),
+          source: String(e.firstNodeId),
+          target: String(e.secondNodeId),
           label: e.label ?? undefined,
           animated: active || isStrong,
           style: {
             stroke: active ? colorVar(folderColor) : colorVar(folderColor),
             strokeWidth: active ? normalizedStrength + 1.5 : normalizedStrength,
-            opacity: active ? 1 : 0.3 + (e.strength / 100) * 0.6,
+            opacity: active ? 1 : 0.3 + (strength / 100) * 0.6,
           },
           labelStyle: {
             fill: "var(--foreground)",

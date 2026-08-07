@@ -5,8 +5,6 @@ import {
   ArrowRight,
   ExternalLink,
   MessageSquarePlus,
-  Plus,
-  Quote,
   Trash2,
   X,
 } from "lucide-react";
@@ -15,19 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { type EdgeEvidence, type GraphEdge, type LinkNode } from "@/lib/types";
+import type { Node, Edge } from "@/lib/types";
 import { controls, graph, surfaces, typography } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
@@ -93,7 +84,7 @@ export function LinkInspector({
   onRemoveFromGraph,
   onAddToGraph,
 }: {
-  link: LinkNode;
+  link: Node;
   connectionCount: number;
   onClose: () => void;
   onSave: (values: { title: string; url: string; description: string }) => void;
@@ -102,13 +93,13 @@ export function LinkInspector({
   onAddToGraph?: () => void;
 }) {
   const [title, setTitle] = useState(link.title);
-  const [url, setUrl] = useState(link.url);
-  const [description, setDescription] = useState(link.description ?? "");
+  const [url, setUrl] = useState(link.link);
+  const [description, setDescription] = useState(link.contentSummary ?? "");
 
   const dirty =
     title !== link.title ||
-    url !== link.url ||
-    description !== (link.description ?? "");
+    url !== link.link ||
+    description !== (link.contentSummary ?? "");
 
   return (
     <InspectorShell
@@ -212,7 +203,7 @@ export function EdgeInspector({
   onSave,
   onDelete,
 }: {
-  edge: GraphEdge;
+  edge: Edge;
   sourceTitle: string;
   targetTitle: string;
   onClose: () => void;
@@ -220,37 +211,18 @@ export function EdgeInspector({
     label: string;
     reasoning: string;
     strength: number;
-    evidence: EdgeEvidence[];
   }) => void;
   onDelete: () => void;
 }) {
   const [label, setLabel] = useState(edge.label ?? "");
   const [reasoning, setReasoning] = useState(edge.reasoning ?? "");
-  const [strength, setStrength] = useState(String(edge.strength));
-  const [evidence, setEvidence] = useState<EdgeEvidence[]>(edge.evidence);
-  const [draftQuote, setDraftQuote] = useState("");
-  const [draftSource, setDraftSource] = useState("");
+  const [strength, setStrength] = useState(String(edge.score ?? 50));
   const [chatOpen, setChatOpen] = useState(true);
 
   const dirty =
     label !== (edge.label ?? "") ||
     reasoning !== (edge.reasoning ?? "") ||
-    strength !== String(edge.strength) ||
-    evidence !== edge.evidence;
-
-  function addEvidence() {
-    if (!draftQuote.trim()) return;
-    setEvidence((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        quote: draftQuote.trim(),
-        source: draftSource.trim() || null,
-      },
-    ]);
-    setDraftQuote("");
-    setDraftSource("");
-  }
+    strength !== String(edge.score ?? 50);
 
   return (
     <InspectorShell
@@ -292,7 +264,6 @@ export function EdgeInspector({
                 label,
                 reasoning,
                 strength: Number(strength),
-                evidence,
               })
             }
           >
