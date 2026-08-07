@@ -1,17 +1,80 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { FolderOpen } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
 import { CreateFolderDialog } from "@/components/create-folder-dialog";
 import { FolderCard } from "@/components/folder-card";
-import { folders } from "@/lib/placeholder-content";
 import { surfaces, typography } from "@/lib/theme";
 import { cn } from "@/lib/utils";
+import * as api from "@/lib/api";
+import type { KnowledgeFolder } from "@/lib/types";
+import { toast } from "sonner";
 
 export default function HomePage() {
+  const [folders, setFolders] = useState<KnowledgeFolder[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadFolders() {
+      try {
+        setLoading(true);
+        const { folders: fetchedFolders } = await api.getAllKnowledgeFolders();
+        setFolders(fetchedFolders);
+      } catch (error) {
+        console.error("Failed to load folders:", error);
+        toast.error("Failed to load folders");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadFolders();
+  }, []);
+
+  async function handleCreateFolder(folder: {
+    title: string;
+    description?: string;
+    color?: string;
+  }) {
+    try {
+      const { folder: newFolder } = await api.createKnowledgeFolder(folder);
+      setFolders((prev) => [...prev, newFolder]);
+      toast.success("Folder created");
+    } catch (error) {
+      console.error("Failed to create folder:", error);
+      toast.error("Failed to create folder");
+    }
+  }
+
+  async function handleDeleteFolder(id: number) {
+    try {
+      await api.deleteKnowledgeFolder(id);
+      setFolders((prev) => prev.filter((f) => f.id !== id));
+      toast.success("Folder deleted");
+    } catch (error) {
+      console.error("Failed to delete folder:", error);
+      toast.error("Failed to delete folder");
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className={surfaces.page}>
+        <SiteHeader>
+          <CreateFolderDialog onCreate={handleCreateFolder} />
+        </SiteHeader>
+        <main className={cn(surfaces.container, "py-10")}>
+          <p className={typography.bodyMuted}>Loading...</p>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className={surfaces.page}>
       <SiteHeader>
-        <CreateFolderDialog />
+        <CreateFolderDialog onCreate={handleCreateFolder} />
       </SiteHeader>
 
       <main className={cn(surfaces.container, "py-10")}>
@@ -34,12 +97,18 @@ export default function HomePage() {
                 Create your first knowledge folder to start collecting links.
               </p>
             </div>
-            <CreateFolderDialog />
+            <CreateFolderDialog onCreate={handleCreateFolder} />
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {folders.map((folder) => (
-              <FolderCard key={folder.id} folder={folder} />
+              <FolderCard
+                key={folder.id}
+                folder={folder}
+                nodeCount={folder.nodeCount || 0}
+                edgeCount={folder.edgeCount || 0}
+                onDelete={handleDeleteFolder}
+              />
             ))}
           </div>
         )}

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import edgeRouter from "./edgeRoutes.js";
 import nodeRouter from "./nodeRoutes.js";
-import knowledgeFileRouter from "./knowledgeFileRoutes.js";
+import knowledgeFolderRouter from "./knowledgeFolderRoutes.js";
 import { Route } from "../types/index.js";
 
 const router = Router();
@@ -16,8 +16,8 @@ const allRoutes: Route[] = [
     route: nodeRouter,
   },
   {
-    path: "/knowledgeFiles",
-    route: knowledgeFileRouter,
+    path: "/knowledgeFolders",
+    route: knowledgeFolderRouter,
   },
 ];
 

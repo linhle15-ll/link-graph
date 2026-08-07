@@ -17,11 +17,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { colorVar, controls, typography } from "@/lib/theme";
-import type { FolderSummary } from "@/lib/types";
+import type { KnowledgeFolder } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function FolderCard({ folder }: { folder: FolderSummary }) {
+export function FolderCard({
+  folder,
+  nodeCount = 0,
+  edgeCount = 0,
+  onDelete,
+}: {
+  folder: KnowledgeFolder;
+  nodeCount?: number;
+  edgeCount?: number;
+  onDelete?: (id: number) => void;
+}) {
   const router = useRouter();
+
+  function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(folder.id);
+    }
+  }
 
   return (
     <Card className="group hover:border-primary/40 relative flex flex-col gap-0 overflow-hidden p-0 transition hover:shadow-md">
@@ -34,7 +51,7 @@ export function FolderCard({ folder }: { folder: FolderSummary }) {
           style={{ backgroundColor: colorVar(folder.color) }}
         />
         <div className="space-y-1.5">
-          <h3 className={typography.cardTitle}>{folder.name}</h3>
+          <h3 className={typography.cardTitle}>{folder.title}</h3>
           {folder.description ? (
             <p className={cn(typography.bodyMuted, "line-clamp-2")}>
               {folder.description}
@@ -49,11 +66,11 @@ export function FolderCard({ folder }: { folder: FolderSummary }) {
         <div className="text-muted-foreground flex items-center gap-4 text-xs">
           <span className="flex items-center gap-1.5">
             <FileText className="size-3.5" />
-            {folder.linkCount} {folder.linkCount === 1 ? "link" : "links"}
+            {nodeCount} {nodeCount === 1 ? "node" : "nodes"}
           </span>
           <span className="flex items-center gap-1.5">
             <GitBranch className="size-3.5" />
-            {folder.edgeCount} {folder.edgeCount === 1 ? "edge" : "edges"}
+            {edgeCount} {edgeCount === 1 ? "edge" : "edges"}
           </span>
         </div>
         <DropdownMenu>
@@ -71,7 +88,7 @@ export function FolderCard({ folder }: { folder: FolderSummary }) {
               <Pencil className="size-4" />
               Rename
             </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">
+            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
               <Trash2 className="size-4" />
               Delete folder
             </DropdownMenuItem>

@@ -5,8 +5,6 @@ import {
   ArrowRight,
   ExternalLink,
   MessageSquarePlus,
-  Plus,
-  Quote,
   Trash2,
   X,
 } from "lucide-react";
@@ -16,23 +14,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  EDGE_STRENGTHS,
-  type EdgeEvidence,
-  type GraphEdge,
-  type LinkNode,
-} from "@/lib/types";
+import type { Node, Edge } from "@/lib/types";
 import { controls, graph, surfaces, typography } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
@@ -95,21 +81,25 @@ export function LinkInspector({
   onClose,
   onSave,
   onDelete,
+  onRemoveFromGraph,
+  onAddToGraph,
 }: {
-  link: LinkNode;
+  link: Node;
   connectionCount: number;
   onClose: () => void;
   onSave: (values: { title: string; url: string; description: string }) => void;
   onDelete: () => void;
+  onRemoveFromGraph?: () => void;
+  onAddToGraph?: () => void;
 }) {
   const [title, setTitle] = useState(link.title);
-  const [url, setUrl] = useState(link.url);
-  const [description, setDescription] = useState(link.description ?? "");
+  const [url, setUrl] = useState(link.link);
+  const [description, setDescription] = useState(link.contentSummary ?? "");
 
   const dirty =
     title !== link.title ||
-    url !== link.url ||
-    description !== (link.description ?? "");
+    url !== link.link ||
+    description !== (link.contentSummary ?? "");
 
   return (
     <InspectorShell
@@ -118,11 +108,22 @@ export function LinkInspector({
       onClose={onClose}
       footer={
         <>
+          {onAddToGraph && (
+            <Button variant="default" size="sm" onClick={onAddToGraph}>
+              Add to Graph
+            </Button>
+          )}
+          {onRemoveFromGraph && (
+            <Button variant="ghost" size="sm" onClick={onRemoveFromGraph}>
+              Remove from Graph
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="sm"
             className={controls.destructive}
             onClick={onDelete}
+            disabled={onRemoveFromGraph !== undefined}
           >
             <Trash2 className="size-4" />
             Delete
@@ -175,14 +176,15 @@ export function LinkInspector({
         </Button>
       </div>
 
-      <div className="grid flex-1 gap-2">
-        {/* <Label htmlFor="insp-desc">Notes</Label> */}
+      <div className="grid flex-1 gap-1">
+        <Label htmlFor="insp-desc">Notes</Label>
         <Textarea
           id="insp-desc"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="What does this source argue, and why did you keep it?"
+          placeholder="Why is this source relevant? What does it argue?"
           className="min-h-40 flex-1 resize-none leading-relaxed"
+          rows={6}
         />
       </div>
     </InspectorShell>
@@ -201,7 +203,7 @@ export function EdgeInspector({
   onSave,
   onDelete,
 }: {
-  edge: GraphEdge;
+  edge: Edge;
   sourceTitle: string;
   targetTitle: string;
   onClose: () => void;
@@ -209,37 +211,18 @@ export function EdgeInspector({
     label: string;
     reasoning: string;
     strength: number;
-    evidence: EdgeEvidence[];
   }) => void;
   onDelete: () => void;
 }) {
   const [label, setLabel] = useState(edge.label ?? "");
   const [reasoning, setReasoning] = useState(edge.reasoning ?? "");
-  const [strength, setStrength] = useState(String(edge.strength));
-  const [evidence, setEvidence] = useState<EdgeEvidence[]>(edge.evidence);
-  const [draftQuote, setDraftQuote] = useState("");
-  const [draftSource, setDraftSource] = useState("");
+  const [strength, setStrength] = useState(String(edge.score ?? 50));
   const [chatOpen, setChatOpen] = useState(true);
 
   const dirty =
     label !== (edge.label ?? "") ||
     reasoning !== (edge.reasoning ?? "") ||
-    strength !== String(edge.strength) ||
-    evidence !== edge.evidence;
-
-  function addEvidence() {
-    if (!draftQuote.trim()) return;
-    setEvidence((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        quote: draftQuote.trim(),
-        source: draftSource.trim() || null,
-      },
-    ]);
-    setDraftQuote("");
-    setDraftSource("");
-  }
+    strength !== String(edge.score ?? 50);
 
   return (
     <InspectorShell
@@ -281,7 +264,6 @@ export function EdgeInspector({
                 label,
                 reasoning,
                 strength: Number(strength),
-                evidence,
               })
             }
           >
@@ -318,22 +300,28 @@ export function EdgeInspector({
             />
           </div>
           <div className="grid gap-2">
-            <Label>Strength</Label>
-            <Select
+            <div className="flex items-baseline justify-between gap-2">
+              {/* Strength indicator: 0 - 100 */}
+              <Label htmlFor="edge-strength">Strength</Label>
+
+              <span className={typography.meta}>
+                {Number(strength) >= 75
+                  ? "Strong"
+                  : Number(strength) >= 25
+                    ? "Moderate"
+                    : "Weak"}{" "}
+                connection
+              </span>
+            </div>
+            <Input
+              id="edge-strength"
+              type="number"
+              min="0"
+              max="100"
               value={strength}
-              onValueChange={(value) => setStrength(value ?? "2")}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {EDGE_STRENGTHS.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(e) => setStrength(e.target.value)}
+              placeholder="50"
+            />
           </div>
         </div>
 
@@ -355,7 +343,7 @@ export function EdgeInspector({
         </div>
 
         {/* Evidence */}
-        <div className="grid gap-2">
+        {/* <div className="grid gap-2">
           <div className="flex items-baseline justify-between gap-2">
             <Label>Supporting excerpts</Label>
             <span className={typography.meta}>{evidence.length}</span>
@@ -428,7 +416,7 @@ export function EdgeInspector({
               </Button>
             </div>
           </div>
-        </div>
+        </div>*/}
       </div>
     </InspectorShell>
   );

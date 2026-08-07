@@ -1,43 +1,48 @@
 import { prisma, Edge } from "database";
-import { CreateEdgeInput } from "../types/index.js";
+import { CreateEdgeInput, UpdateEdgeInput } from "../types/index.js";
 
 export const getEdge = async (id: number): Promise<Edge | null> => {
   return await prisma.edge.findUnique({
     where: {
       id: id,
     },
-  });
-};
-
-export const getEdgesByFileId = async (
-  fileId: number,
-): Promise<Edge[] | null> => {
-  return await prisma.edge.findMany({
-    where: {
-      knowledgeFileId: fileId,
+    include: {
+      firstNode: true,
+      secondNode: true,
     },
   });
 };
 
-export const getEdgesByFileIdAndNodeIds = async (
-  fileId: number,
+export const getEdgesByFolderId = async (
+  folderId: number,
+): Promise<Edge[] | null> => {
+  return await prisma.edge.findMany({
+    where: {
+      knowledgeFolderId: folderId,
+    },
+    include: {
+      firstNode: true,
+      secondNode: true,
+    },
+  });
+};
+
+export const getEdgesByFolderIdAndNodeIds = async (
+  folderId: number,
   nodeIds: number[],
 ): Promise<Edge[]> => {
   const edges = await prisma.edge.findMany({
     where: {
-      knowledgeFileId: fileId,
-      nodes: {
-        every: {
-          id: { in: nodeIds },
-        },
-      },
+      knowledgeFolderId: folderId,
+      OR: [{ firstNodeId: { in: nodeIds } }, { secondNodeId: { in: nodeIds } }],
     },
     include: {
-      nodes: true,
+      firstNode: true,
+      secondNode: true,
     },
   });
 
-  return edges.filter((edge) => edge.nodes.length === nodeIds.length);
+  return edges;
 };
 
 export const getEdgesByNodeId = async (
@@ -45,24 +50,37 @@ export const getEdgesByNodeId = async (
 ): Promise<Edge[] | null> => {
   return prisma.edge.findMany({
     where: {
-      nodes: {
-        some: {
-          id: nodeId,
-        },
-      },
+      OR: [{ firstNodeId: nodeId }, { secondNodeId: nodeId }],
+    },
+    include: {
+      firstNode: true,
+      secondNode: true,
     },
   });
 };
 
 export const postEdge = async (input: CreateEdgeInput): Promise<Edge> => {
-  const { nodeIds, ...data } = input;
-
   return prisma.edge.create({
-    data: {
-      ...data,
-      nodes: {
-        connect: nodeIds.map((id) => ({ id })),
-      },
+    data: input,
+    include: {
+      firstNode: true,
+      secondNode: true,
+    },
+  });
+};
+
+export const updateEdgeById = async (
+  id: number,
+  input: UpdateEdgeInput,
+): Promise<Edge> => {
+  return await prisma.edge.update({
+    where: {
+      id: id,
+    },
+    data: input,
+    include: {
+      firstNode: true,
+      secondNode: true,
     },
   });
 };
@@ -75,30 +93,26 @@ export const deleteEdgeById = async (id: number): Promise<Edge | null> => {
   });
 };
 
-export const deleteEdgesByKnowledgeFileId = async (
-  knowledgeFileId: number,
+export const deleteEdgesByKnowledgeFolderId = async (
+  knowledgeFolderId: number,
 ): Promise<number> => {
   const deletedEdges = await prisma.edge.deleteMany({
     where: {
-      knowledgeFileId,
+      knowledgeFolderId,
     },
   });
 
   return deletedEdges.count;
 };
 
-export const deleteEdgesByFileIdAndNodeIds = async (
-  knowledgeFileId: number,
+export const deleteEdgesByFolderIdAndNodeIds = async (
+  knowledgeFolderId: number,
   nodeIds: number[],
 ): Promise<number> => {
   const deletedEdges = await prisma.edge.deleteMany({
     where: {
-      knowledgeFileId,
-      nodes: {
-        some: {
-          id: { in: nodeIds },
-        },
-      },
+      knowledgeFolderId,
+      OR: [{ firstNodeId: { in: nodeIds } }, { secondNodeId: { in: nodeIds } }],
     },
   });
 

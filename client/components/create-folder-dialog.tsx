@@ -20,7 +20,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { FOLDER_COLORS, colorVar, controls, typography } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-export function CreateFolderDialog() {
+export function CreateFolderDialog({
+  onCreate,
+}: {
+  onCreate?: (folder: {
+    title: string;
+    description?: string;
+    color?: string;
+  }) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -38,7 +46,15 @@ export function CreateFolderDialog() {
       toast.error("Give your folder a name.");
       return;
     }
-    toast.success("Knowledge folder created.");
+
+    if (onCreate) {
+      onCreate({
+        title: name,
+        description: description || undefined,
+        color: color,
+      });
+    }
+
     setOpen(false);
     reset();
   }

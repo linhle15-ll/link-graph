@@ -1,106 +1,109 @@
 import { asyncHandler, statuses } from "../utils/index.js";
 import { type Request, Response, NextFunction } from "express";
-import { knowledgeFileService } from "../services/index.js";
+import { knowledgeFolderService } from "../services/index.js";
 import { CustomRequest } from "../types/index.js";
 import { AppError } from "../middleware/errorHandler.js";
 
-export const getAllKnowledgeFiles = asyncHandler(
+export const getAllKnowledgeFolders = asyncHandler(
   async (req: Request, res: Response) => {
     const { userId } = req as CustomRequest;
 
-    const files = await knowledgeFileService.getKnowledgeFilesByUserId(userId);
+    const folders =
+      await knowledgeFolderService.getKnowledgeFoldersByUserId(userId);
 
     res.status(statuses.OK).json({
       data: {
-        files: files ?? [],
+        folders: folders ?? [],
       },
     });
   },
 );
 
-export const postKnowledgeFile = asyncHandler(
+export const postKnowledgeFolder = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req as CustomRequest;
-    const { title, description } = req.body;
+    const { title, description, color } = req.body;
 
     if (!title) {
       throw AppError.badRequest("title is required");
     }
 
-    const file = await knowledgeFileService.postKnowledgeFile({
+    const folder = await knowledgeFolderService.postKnowledgeFolder({
       title,
       description,
+      color,
       userId,
     });
 
-    if (!file) {
+    if (!folder) {
       return next(
         new AppError(
           statuses["Internal Server Error"],
-          "Failed to create knowledge file",
+          "Failed to create knowledge folder",
         ),
       );
     }
 
     res.status(statuses.OK).json({
       data: {
-        file,
+        folder,
       },
     });
   },
 );
 
-export const deleteKnowledgeFileById = asyncHandler(
+export const deleteKnowledgeFolderById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const deletedFile = await knowledgeFileService.deleteKnowledgeFileById(
+    const deletedFolder =
+      await knowledgeFolderService.deleteKnowledgeFolderById(Number(id));
+
+    if (!deletedFolder) {
+      return next(AppError.notFound("Folder with the given ID does not exist"));
+    }
+
+    res.status(statuses.OK).json({
+      data: {
+        deletedFolder,
+      },
+    });
+  },
+);
+
+export const getKnowledgeFolderById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const folder = await knowledgeFolderService.getKnowledgeFolderById(
       Number(id),
     );
 
-    if (!deletedFile) {
-      return next(AppError.notFound("File with the given ID do not exist"));
+    if (!folder) {
+      return next(AppError.notFound("Folder with the given ID does not exist"));
     }
-
     res.status(statuses.OK).json({
       data: {
-        deletedFile,
+        folder,
       },
     });
   },
 );
 
-export const getKnowledgeFileById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const file = await knowledgeFileService.getKnowledgeFileById(Number(id));
-
-    if (!file) {
-      return next(AppError.notFound("File with the given ID do not exist"));
-    }
-    res.status(statuses.OK).json({
-      data: {
-        file,
-      },
-    });
-  },
-);
-
-export const deleteKnowledgeFilesByUserId = asyncHandler(
+export const deleteKnowledgeFoldersByUserId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req as CustomRequest;
 
-    const deletedFilesCount =
-      await knowledgeFileService.deleteKnowledgeFilesByUserId(userId);
+    const deletedFoldersCount =
+      await knowledgeFolderService.deleteKnowledgeFoldersByUserId(userId);
 
-    if (!deletedFilesCount) {
+    if (!deletedFoldersCount) {
       return next(
-        AppError.notFound("Files with the given user ID do not exist"),
+        AppError.notFound("Folders with the given user ID do not exist"),
       );
     }
 
     res.status(statuses.OK).json({
       data: {
-        deletedCount: deletedFilesCount,
+        deletedCount: deletedFoldersCount,
       },
     });
   },

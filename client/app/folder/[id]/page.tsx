@@ -1,7 +1,4 @@
-import { notFound } from "next/navigation";
-
 import { FolderWorkspace } from "@/components/folder-workspace";
-import { getFolder, getGraph } from "@/lib/placeholder-content";
 
 export default async function FolderPage({
   params,
@@ -9,17 +6,15 @@ export default async function FolderPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const folderId = Number(id);
-  const folder = Number.isInteger(folderId) ? getFolder(folderId) : null;
-  if (!folder) notFound();
+  const folderId = parseInt(id, 10);
 
-  const { nodes, edges } = getGraph(folderId);
+  if (isNaN(folderId)) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Invalid folder ID</p>
+      </div>
+    );
+  }
 
-  return (
-    <FolderWorkspace
-      folder={folder}
-      initialLinks={nodes}
-      initialEdges={edges}
-    />
-  );
+  return <FolderWorkspace folderId={folderId} />;
 }

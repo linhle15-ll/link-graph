@@ -14,7 +14,7 @@ export const getNodeById = asyncHandler(
     const node = await nodeService.getNodeById(Number(id));
 
     if (!node) {
-      return next(AppError.notFound("Nodes with the given ID do not exist"));
+      return next(AppError.notFound("Node with the given ID does not exist"));
     }
 
     res.status(statuses.OK).json({
@@ -25,16 +25,16 @@ export const getNodeById = asyncHandler(
   },
 );
 
-export const getNodesByFileId = asyncHandler(
+export const getNodesByFolderId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const knowledgeFileId = getQueryParamAsNumber(req, "knowledgeFileId", {
+    const knowledgeFolderId = getQueryParamAsNumber(req, "knowledgeFolderId", {
       required: true,
     });
 
-    const nodes = await nodeService.getNodesByFileId(knowledgeFileId);
+    const nodes = await nodeService.getNodesByFolderId(knowledgeFolderId);
 
     if (!nodes) {
-      return next(AppError.notFound("Nodes for the given file do not exist"));
+      return next(AppError.notFound("Nodes for the given folder do not exist"));
     }
 
     res.status(statuses.OK).json({
@@ -51,13 +51,22 @@ export const getNodesByFileId = asyncHandler(
  **/
 export const postNode = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { knowledgeFileId, link } = req.body;
+    const { knowledgeFolderId, link, title, posX, posY, isOnGraph } = req.body;
 
-    if (!knowledgeFileId || !link) {
-      throw AppError.badRequest("knowledgeFileId and link are required");
+    if (!knowledgeFolderId || !link || !title) {
+      throw AppError.badRequest(
+        "knowledgeFolderId, link, and title are required",
+      );
     }
 
-    const node = await nodeService.postNode(knowledgeFileId, link);
+    const node = await nodeService.postNode({
+      knowledgeFolderId,
+      link,
+      title,
+      posX,
+      posY,
+      isOnGraph,
+    });
 
     if (!node) {
       return next(
@@ -76,6 +85,31 @@ export const postNode = asyncHandler(
   },
 );
 
+export const updateNodeById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { title, contentSummary, posX, posY, isOnGraph } = req.body;
+
+    const updatedNode = await nodeService.updateNodeById(Number(id), {
+      title,
+      contentSummary,
+      posX,
+      posY,
+      isOnGraph,
+    });
+
+    if (!updatedNode) {
+      return next(AppError.notFound("Node with the given ID does not exist"));
+    }
+
+    res.status(statuses.OK).json({
+      data: {
+        node: updatedNode,
+      },
+    });
+  },
+);
+
 export const deleteNodeById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
@@ -83,7 +117,7 @@ export const deleteNodeById = asyncHandler(
     const deletedNode = await nodeService.deleteNodeById(Number(id));
 
     if (!deletedNode) {
-      return next(AppError.notFound("Nodes with the given ID do not exist"));
+      return next(AppError.notFound("Node with the given ID does not exist"));
     }
 
     res.status(statuses.OK).json({
@@ -94,18 +128,18 @@ export const deleteNodeById = asyncHandler(
   },
 );
 
-export const deleteNodesByFileId = asyncHandler(
+export const deleteNodesByFolderId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const knowledgeFileId = getQueryParamAsNumber(req, "knowledgeFileId", {
+    const knowledgeFolderId = getQueryParamAsNumber(req, "knowledgeFolderId", {
       required: true,
     });
 
     const deletedNodesCount =
-      await nodeService.deleteNodesByFileId(knowledgeFileId);
+      await nodeService.deleteNodesByFolderId(knowledgeFolderId);
 
     if (!deletedNodesCount) {
       return next(
-        AppError.notFound("Nodes with the given file ID do not exist"),
+        AppError.notFound("Nodes with the given folder ID do not exist"),
       );
     }
 

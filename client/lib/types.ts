@@ -1,51 +1,83 @@
-/** UI-level data shapes. A real data layer can implement these later. */
+/** Client types matching the backend schema exactly. */
 
-export type Folder = {
+export type KnowledgeFolder = {
   id: number;
-  name: string;
+  title: string;
   description: string | null;
   color: string | null;
+  userId: number;
+  createdAt: string;
+  updatedAt: string;
+  nodeCount?: number;
+  edgeCount?: number;
 };
 
-export type FolderSummary = Folder & {
-  linkCount: number;
-  edgeCount: number;
-};
-
-export type LinkNode = {
+export type Node = {
   id: number;
-  folderId: number;
   title: string;
-  url: string;
-  description: string | null;
-  posX: number;
-  posY: number;
-};
-
-/** A supporting quote or excerpt that justifies an edge. */
-export type EdgeEvidence = {
-  id: number;
-  quote: string;
-  /** Where the quote came from, e.g. "Section 3.2" or a source title. */
+  link: string;
+  authors: string[];
   source: string | null;
+  contentSummary: string | null;
+  posX: number | null;
+  posY: number | null;
+  isOnGraph: boolean;
+  knowledgeFolderId: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
-export type GraphEdge = {
+export type Edge = {
   id: number;
-  folderId: number;
-  sourceId: number;
-  targetId: number;
-  /** Short relationship label rendered on the edge, e.g. "builds on". */
   label: string | null;
-  /** Long-form explanation of why the two sources are connected. */
   reasoning: string | null;
-  /** 1 = loosely related, 2 = related, 3 = strongly related. */
-  strength: number;
-  evidence: EdgeEvidence[];
+  score: number | null;
+  firstNodeId: number;
+  secondNodeId: number;
+  knowledgeFolderId: number;
+  createdAt: string;
+  updatedAt: string;
+  firstNode?: Node;
+  secondNode?: Node;
 };
 
-export const EDGE_STRENGTHS = [
-  { value: "1", label: "Loosely related" },
-  { value: "2", label: "Related" },
-  { value: "3", label: "Strongly related" },
-] as const;
+/** API request/response types */
+
+export type CreateKnowledgeFolderInput = {
+  title: string;
+  description?: string;
+  color?: string;
+};
+
+export type CreateNodeInput = {
+  title: string;
+  link: string;
+  knowledgeFolderId: number;
+  contentSummary?: string;
+  posX?: number;
+  posY?: number;
+  isOnGraph?: boolean;
+};
+
+export type UpdateNodeInput = {
+  title?: string;
+  contentSummary?: string;
+  posX?: number;
+  posY?: number;
+  isOnGraph?: boolean;
+};
+
+export type CreateEdgeInput = {
+  knowledgeFolderId: number;
+  firstNodeId: number;
+  secondNodeId: number;
+  label?: string;
+  reasoning?: string;
+  score?: number;
+};
+
+export type UpdateEdgeInput = {
+  label?: string;
+  reasoning?: string;
+  score?: number;
+};

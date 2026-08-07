@@ -45,14 +45,14 @@ export const deleteEdgeById = asyncHandler(
 );
 
 export const getEdges = asyncHandler(async (req: Request, res: Response) => {
-  const knowledgeFileId = getQueryParamAsNumber(req, "knowledgeFileId", {
+  const knowledgeFolderId = getQueryParamAsNumber(req, "knowledgeFolderId", {
     required: true,
   });
   const nodeIds = getQueryParamAsNumberArray(req, "nodeIds");
 
   const edges = nodeIds
-    ? await edgeService.getEdgesByFileIdAndNodeIds(knowledgeFileId, nodeIds)
-    : await edgeService.getEdgesByFileId(knowledgeFileId);
+    ? await edgeService.getEdgesByFolderIdAndNodeIds(knowledgeFolderId, nodeIds)
+    : await edgeService.getEdgesByFolderId(knowledgeFolderId);
 
   res.status(statuses.OK).json({
     data: {
@@ -62,13 +62,29 @@ export const getEdges = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const postEdge = asyncHandler(async (req: Request, res: Response) => {
-  const { knowledgeFileId, nodeIds, reason } = req.body;
+  const {
+    knowledgeFolderId,
+    firstNodeId,
+    secondNodeId,
+    label,
+    reasoning,
+    score,
+  } = req.body;
 
-  if (!knowledgeFileId || !nodeIds) {
-    throw AppError.badRequest("knowledgeFileId and nodeIds are required");
+  if (!knowledgeFolderId || !firstNodeId || !secondNodeId) {
+    throw AppError.badRequest(
+      "knowledgeFolderId, firstNodeId, and secondNodeId are required",
+    );
   }
 
-  const edge = await edgeService.postEdge(knowledgeFileId, nodeIds, reason);
+  const edge = await edgeService.postEdge({
+    knowledgeFolderId,
+    firstNodeId,
+    secondNodeId,
+    label,
+    reasoning,
+    score,
+  });
 
   res.status(statuses.OK).json({
     data: {
@@ -76,6 +92,29 @@ export const postEdge = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 });
+
+export const updateEdgeById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { label, reasoning, score } = req.body;
+
+    const updatedEdge = await edgeService.updateEdgeById(Number(id), {
+      label,
+      reasoning,
+      score,
+    });
+
+    if (!updatedEdge) {
+      return next(AppError.notFound("Edge with id does not exist"));
+    }
+
+    res.status(statuses.OK).json({
+      data: {
+        edge: updatedEdge,
+      },
+    });
+  },
+);
 
 export const getEdgesByNodeId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -96,23 +135,23 @@ export const getEdgesByNodeId = asyncHandler(
   },
 );
 
-export const deleteEdgesByKnowledgeFileId = asyncHandler(
+export const deleteEdgesByKnowledgeFolderId = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const knowledgeFileId = getQueryParamAsNumber(req, "knowledgeFileId", {
+    const knowledgeFolderId = getQueryParamAsNumber(req, "knowledgeFolderId", {
       required: true,
     });
     const nodeIds = getQueryParamAsNumberArray(req, "nodeIds");
 
     const deletedCount = nodeIds
-      ? await edgeService.deleteEdgesByFileIdAndNodeIds(
-          knowledgeFileId,
+      ? await edgeService.deleteEdgesByFolderIdAndNodeIds(
+          knowledgeFolderId,
           nodeIds,
         )
-      : await edgeService.deleteEdgesByKnowledgeFileId(knowledgeFileId);
+      : await edgeService.deleteEdgesByKnowledgeFolderId(knowledgeFolderId);
 
     if (!deletedCount) {
       return next(
-        AppError.notFound("Edges with the given file ID do not exist"),
+        AppError.notFound("Edges with the given folder ID do not exist"),
       );
     }
 

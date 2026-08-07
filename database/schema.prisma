@@ -8,48 +8,57 @@ datasource db {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
-  email          String          @unique
-  name           String?
-  password       String
-  knowledgeFiles KnowledgeFile[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id               Int               @id @default(autoincrement())
+  email            String            @unique
+  name             String?
+  password         String
+  knowledgeFolders KnowledgeFolder[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 }
 
-model KnowledgeFile {
-  id Int @id @default(autoincrement())
+model KnowledgeFolder {
+  id          Int      @id @default(autoincrement())
   title       String   @unique
   description String?
-  nodes       Node[]
-  edges       Edge[]
+  color       String?
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
+  nodes       Node[]
+  edges       Edge[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model Edge {
-  id              Int           @id @default(autoincrement())
-  score           Float?
-  reason          String?
-  nodes           Node[]
-  knowledgeFileId Int
-  knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+model Node {
+  id                Int             @id @default(autoincrement())
+  title             String
+  link              String
+  authors           String[]        @default([])
+  source            String?
+  contentSummary    String?
+  posX              Float?
+  posY              Float?
+  isOnGraph         Boolean         @default(false)
+  knowledgeFolderId Int
+  knowledgeFolder   KnowledgeFolder @relation(fields: [knowledgeFolderId], references: [id])
+  firstNodeEdges    Edge[]          @relation("FirstNode")
+  secondNodeEdges   Edge[]          @relation("SecondNode")
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }
 
-model Node {
-  id              Int           @id @default(autoincrement())
-  title           String
-  authors         String[]
-  source          String?
-  contentSummary  String?
-  link            String?
-  edges           Edge[]
-  knowledgeFileId Int
-  knowledgeFile   KnowledgeFile @relation(fields: [knowledgeFileId], references: [id])
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+model Edge {
+  id                Int             @id @default(autoincrement())
+  label             String?
+  reasoning         String?
+  score             Float?
+  firstNodeId       Int
+  firstNode         Node            @relation("FirstNode", fields: [firstNodeId], references: [id])
+  secondNodeId      Int
+  secondNode        Node            @relation("SecondNode", fields: [secondNodeId], references: [id])
+  knowledgeFolderId Int
+  knowledgeFolder   KnowledgeFolder @relation(fields: [knowledgeFolderId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }
