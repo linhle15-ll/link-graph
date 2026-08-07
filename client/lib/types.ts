@@ -37,7 +37,6 @@ export type Edge = {
   knowledgeFolderId: number;
   createdAt: string;
   updatedAt: string;
-  // Populated relations from backend
   firstNode?: Node;
   secondNode?: Node;
 };
