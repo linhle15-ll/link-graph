@@ -1,23 +1,22 @@
 import { Edge } from "database";
 import { edgeRepository } from "../repository/index.js";
-import { CreateEdgeInput, compact } from "../types/index.js";
-import { scoreEdge } from "./edgeScoreService.js";
+import { CreateEdgeInput, UpdateEdgeInput } from "../types/index.js";
 
 export const getEdgeById = async (id: number): Promise<Edge | null> => {
   return edgeRepository.getEdge(id);
 };
 
-export const getEdgesByFileId = async (
-  fileId: number,
+export const getEdgesByFolderId = async (
+  folderId: number,
 ): Promise<Edge[] | null> => {
-  return edgeRepository.getEdgesByFileId(fileId);
+  return edgeRepository.getEdgesByFolderId(folderId);
 };
 
-export const getEdgesByFileIdAndNodeIds = async (
-  fileId: number,
+export const getEdgesByFolderIdAndNodeIds = async (
+  folderId: number,
   nodeIds: number[],
 ): Promise<Edge[]> => {
-  return edgeRepository.getEdgesByFileIdAndNodeIds(fileId, nodeIds);
+  return edgeRepository.getEdgesByFolderIdAndNodeIds(folderId, nodeIds);
 };
 
 export const getEdgesByNodeId = async (
@@ -26,36 +25,33 @@ export const getEdgesByNodeId = async (
   return edgeRepository.getEdgesByNodeId(nodeId);
 };
 
+export const postEdge = async (input: CreateEdgeInput): Promise<Edge> => {
+  return edgeRepository.postEdge(input);
+};
+
+export const updateEdgeById = async (
+  id: number,
+  input: UpdateEdgeInput,
+): Promise<Edge> => {
+  return edgeRepository.updateEdgeById(id, input);
+};
+
 export const deleteEdgeById = async (id: number): Promise<Edge | null> => {
   return edgeRepository.deleteEdgeById(id);
 };
 
-export const deleteEdgesByKnowledgeFileId = async (
-  knowledgeFileId: number,
+export const deleteEdgesByKnowledgeFolderId = async (
+  knowledgeFolderId: number,
 ): Promise<number> => {
-  return edgeRepository.deleteEdgesByKnowledgeFileId(knowledgeFileId);
+  return edgeRepository.deleteEdgesByKnowledgeFolderId(knowledgeFolderId);
 };
 
-export const deleteEdgesByFileIdAndNodeIds = async (
-  knowledgeFileId: number,
+export const deleteEdgesByFolderIdAndNodeIds = async (
+  knowledgeFolderId: number,
   nodeIds: number[],
 ): Promise<number> => {
-  return edgeRepository.deleteEdgesByFileIdAndNodeIds(knowledgeFileId, nodeIds);
-};
-
-export const postEdge = async (
-  knowledgeFileId: number,
-  nodeIds: number[],
-  reason?: string,
-): Promise<Edge> => {
-  const score = await scoreEdge(nodeIds);
-
-  const input: CreateEdgeInput = compact({
-    knowledgeFileId,
+  return edgeRepository.deleteEdgesByFolderIdAndNodeIds(
+    knowledgeFolderId,
     nodeIds,
-    score,
-    reason,
-  });
-
-  return edgeRepository.postEdge(input);
+  );
 };

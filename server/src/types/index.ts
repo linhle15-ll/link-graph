@@ -2,23 +2,43 @@ import { type Request, Response, NextFunction, Router } from "express";
 
 export type CreateNodeInput = {
   title: string;
-  knowledgeFileId: number;
+  knowledgeFolderId: number;
   authors?: string[];
   source?: string;
   contentSummary?: string;
   link: string;
+  posX?: number;
+  posY?: number;
+  isOnGraph?: boolean;
+};
+
+export type UpdateNodeInput = {
+  title?: string;
+  contentSummary?: string;
+  posX?: number;
+  posY?: number;
+  isOnGraph?: boolean;
 };
 
 export type CreateEdgeInput = {
-  knowledgeFileId: number;
-  nodeIds: number[];
-  score: number;
-  reason?: string;
+  knowledgeFolderId: number;
+  firstNodeId: number;
+  secondNodeId: number;
+  label?: string;
+  reasoning?: string;
+  score?: number;
 };
 
-export type CreateKnowledgeFileInput = {
+export type UpdateEdgeInput = {
+  label?: string;
+  reasoning?: string;
+  score?: number;
+};
+
+export type CreateKnowledgeFolderInput = {
   title: string;
   description?: string;
+  color?: string;
   userId: number;
 };
 
@@ -29,7 +49,7 @@ export interface CustomRequest extends Request {
 
 export interface RequestBody {
   link: string;
-  knowledgeFileId: number;
+  knowledgeFolderId: number;
 }
 
 export type AsyncHandlerFn = (

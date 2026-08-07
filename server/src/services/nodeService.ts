@@ -1,53 +1,42 @@
 import { Node } from "database";
 import { nodeRepository } from "../repository/index.js";
-import { CreateNodeInput, RequestBody, compact } from "../types/index.js";
-import { extractNodeMetadata } from "./extractionService.js";
-import { summarizeNode } from "./summaryService.js";
-import { detectEdgesForNode } from "./edgeDetectionService.js";
+import { CreateNodeInput, UpdateNodeInput } from "../types/index.js";
 
 export const getNodeById = async (id: number): Promise<Node | null> => {
   return await nodeRepository.getNode(id);
 };
 
-export const getNodesByFileId = async (
-  fileId: number,
+export const getNodesByFolderId = async (
+  folderId: number,
 ): Promise<Node[] | null> => {
-  return await nodeRepository.getNodesByFileId(fileId);
+  return await nodeRepository.getNodesByFolderId(folderId);
 };
 
 export const postNode = async (
-  knowledgeFileId: number,
-  link: string,
+  input: CreateNodeInput,
 ): Promise<Node | null> => {
-  const { title, authors, source } = await extractNodeMetadata(link);
-  const contentSummary = await summarizeNode(link);
-
-  const input: CreateNodeInput = compact({
-    title,
-    authors,
-    source,
-    contentSummary,
-    knowledgeFileId: knowledgeFileId,
-    link: link,
-  });
-
   const node = await nodeRepository.postNode(input);
 
   if (!node) {
     return null;
   }
 
-  await detectEdgesForNode(node);
-
   return node;
+};
+
+export const updateNodeById = async (
+  id: number,
+  input: UpdateNodeInput,
+): Promise<Node | null> => {
+  return nodeRepository.updateNodeById(id, input);
 };
 
 export const deleteNodeById = async (id: number): Promise<Node | null> => {
   return nodeRepository.deleteNodeById(id);
 };
 
-export const deleteNodesByFileId = async (
-  fileId: number,
+export const deleteNodesByFolderId = async (
+  folderId: number,
 ): Promise<number | null> => {
-  return nodeRepository.deleteNodesByFileId(fileId);
+  return nodeRepository.deleteNodesByFolderId(folderId);
 };

@@ -67,16 +67,23 @@ export function KnowledgeGraph({
     () =>
       edges.map((e) => {
         const active = selectedEdgeId === e.id;
+        // Normalize strength from 0-100 to 1-4 for visual weight
+        const normalizedStrength = Math.max(
+          1,
+          Math.min(4, e.strength / 25 + 1),
+        );
+        const isStrong = e.strength >= 75;
+
         return {
           id: String(e.id),
           source: String(e.sourceId),
           target: String(e.targetId),
           label: e.label ?? undefined,
-          animated: active || e.strength >= 3,
+          animated: active || isStrong,
           style: {
             stroke: active ? colorVar(folderColor) : colorVar(folderColor),
-            strokeWidth: active ? e.strength + 1.5 : e.strength,
-            opacity: active ? 1 : 0.45 + e.strength * 0.12,
+            strokeWidth: active ? normalizedStrength + 1.5 : normalizedStrength,
+            opacity: active ? 1 : 0.3 + (e.strength / 100) * 0.6,
           },
           labelStyle: {
             fill: "var(--foreground)",

@@ -176,7 +176,7 @@ Apply the schema to PostgreSQL/ if schema changes - Run Prisma migration command
 
 ```bash
 pnpm prisma generate
-pnpm prisma migrate dev
+pnpm prisma migrate dev --name <give this migration a name>
 ```
 
 Then start app
