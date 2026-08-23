@@ -48,27 +48,19 @@ export const getNodesByFolderId = asyncHandler(
 /**
  * input: link to paper
  * returns created node
+ * TODO: why did this originally have positions as req info
  **/
 export const postNode = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { knowledgeFolderId, link, title, posX, posY, isOnGraph } = req.body;
+    const { knowledgeFolderId, link } = req.body;
 
-    if (!knowledgeFolderId || !link || !title) {
-      throw AppError.badRequest(
-        "knowledgeFolderId, link, and title are required",
-      );
+    if (!knowledgeFolderId || !link) {
+      throw AppError.badRequest("knowledgeFolderId, link are required");
     }
 
-    const node = await nodeService.postNode({
-      knowledgeFolderId,
-      link,
-      title,
-      posX,
-      posY,
-      isOnGraph,
-    });
+    const createdNode = await nodeService.postNode(knowledgeFolderId, link);
 
-    if (!node) {
+    if (!createdNode) {
       return next(
         new AppError(
           statuses["Internal Server Error"],
@@ -79,7 +71,7 @@ export const postNode = asyncHandler(
 
     res.status(statuses.OK).json({
       data: {
-        node,
+        node: createdNode,
       },
     });
   },

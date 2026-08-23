@@ -62,10 +62,11 @@ export type QueryParamOptions = { required?: boolean };
 
 export type Route = { path: string; route: Router };
 
-export type ExtractedNodeMetadata = {
+export type ScrapedNodeMetaData = {
   title: string;
   authors?: string[];
   source?: string;
+  contentSummary?: string;
 };
 
 export type Compactable<T> = {

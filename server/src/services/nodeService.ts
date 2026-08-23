@@ -1,6 +1,7 @@
 import { Node } from "database";
 import { nodeRepository } from "../repository/index.js";
-import { CreateNodeInput, UpdateNodeInput } from "../types/index.js";
+import * as scrappingService from "./scrappingService.js";
+import { compact, CreateNodeInput, UpdateNodeInput } from "../types/index.js";
 
 export const getNodeById = async (id: number): Promise<Node | null> => {
   return await nodeRepository.getNode(id);
@@ -13,8 +14,28 @@ export const getNodesByFolderId = async (
 };
 
 export const postNode = async (
-  input: CreateNodeInput,
+  knowledgeFolderId: number,
+  link: string,
 ): Promise<Node | null> => {
+  // if link already in db, ignore and print to log
+
+  const scrapedData = await scrappingService.scrapeForMetaData(link);
+
+  const input: CreateNodeInput = compact({
+    knowledgeFolderId,
+    link,
+    title: scrapedData?.title ?? link,
+    authors: scrapedData?.authors,
+  });
+
+  if (scrapedData?.source) {
+    input.source = scrapedData?.source;
+  }
+
+  if (scrapedData?.contentSummary) {
+    input.contentSummary = scrapedData?.contentSummary;
+  }
+
   const node = await nodeRepository.postNode(input);
 
   if (!node) {
