@@ -33,7 +33,7 @@ model KnowledgeFolder {
 model Node {
   id                Int             @id @default(autoincrement())
   title             String
-  link              String
+  link              String          @unique
   authors           String[]        @default([])
   source            String?
   contentSummary    String?
