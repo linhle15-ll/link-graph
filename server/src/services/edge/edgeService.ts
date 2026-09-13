@@ -1,6 +1,6 @@
 import { Edge } from "database";
-import { edgeRepository } from "../repository/index.js";
-import { CreateEdgeInput, UpdateEdgeInput } from "../types/index.js";
+import { edgeRepository } from "../../repository/index.js";
+import { CreateEdgeInput, UpdateEdgeInput } from "../../types/index.js";
 
 export const getEdgeById = async (id: number): Promise<Edge | null> => {
   return edgeRepository.getEdge(id);
